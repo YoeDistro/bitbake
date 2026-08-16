@@ -1322,8 +1322,10 @@ You can also remove the BB_HASHSERVE_UPSTREAM setting, but this may result in si
         if bf.startswith("/") or bf.startswith("../"):
             bf = os.path.abspath(bf)
 
-        collections = {mc: CookerCollectFiles(self.bbfile_config_priorities, mc)}
-        filelist, masked, searchdirs = collections[mc].collect_bbfiles(self.databuilder.mcdata[mc], self.databuilder.mcdata[mc])
+        # The only place the "bitbake -b" path fills in the bbappends which
+        # buildFileInternal() then reads back from self.collections[mc].
+        self.collections[mc] = CookerCollectFiles(self.bbfile_config_priorities, mc)
+        filelist, masked, searchdirs = self.collections[mc].collect_bbfiles(self.databuilder.mcdata[mc], self.databuilder.mcdata[mc])
         try:
             os.stat(bf)
             bf = os.path.abspath(bf)
